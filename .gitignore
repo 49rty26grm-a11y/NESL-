@@ -1,0 +1,8 @@
+.env
+__pycache__/
+*.pyc
+*.pyo
+.ig_session.json
+posts/*.png
+posts/*.txt
+posts/*.jpg
