@@ -64,3 +64,14 @@ ESPN_NBA_NEWS        = "https://site.api.espn.com/apis/site/v2/sports/basketball
 
 PATRIOTS_TEAM_ID = "17"
 CELTICS_TEAM_ID  = "2"
+
+# ─── Local Boston News RSS Feeds ──────────────────────────────────────────────
+
+NBC_BOSTON_CELTICS  = "https://www.nbcsportsboston.com/category/nba/boston-celtics/feed/"
+NBC_BOSTON_PATRIOTS = "https://www.nbcsportsboston.com/category/nfl/new-england-patriots/feed/"
+
+HERALD_CELTICS      = "https://www.bostonherald.com/sports/boston-celtics/feed/"
+HERALD_PATRIOTS     = "https://www.bostonherald.com/sports/new-england-patriots/feed/"
+
+GLOBE_CELTICS       = "https://www.bostonglobe.com/arc/outboundfeeds/rss/tag/boston-celtics/"
+GLOBE_PATRIOTS      = "https://www.bostonglobe.com/arc/outboundfeeds/rss/tag/new-england-patriots/"

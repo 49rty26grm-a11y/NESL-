@@ -131,7 +131,8 @@ class NESLAgent:
                 "name": "get_sports_news",
                 "description": (
                     "Fetch the latest sports news headlines and descriptions for the Patriots or Celtics "
-                    "from ESPN. Returns article headlines, descriptions, and publish dates."
+                    "from ESPN, NBC Sports Boston, Boston Herald, and Boston Globe. "
+                    "Returns article headlines, descriptions, publish dates, and source outlet."
                 ),
                 "input_schema": {
                     "type": "object",
