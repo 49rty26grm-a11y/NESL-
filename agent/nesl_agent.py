@@ -91,7 +91,7 @@ IMPORTANT:
 class NESLAgent:
     """Claude-powered agent that manages NESL's social media presence."""
 
-    MODEL = "claude-opus-4-6"
+    MODEL = "claude-sonnet-4-6"
 
     def __init__(self) -> None:
         self.client   = anthropic.Anthropic(api_key=config.ANTHROPIC_API_KEY)
@@ -341,7 +341,7 @@ class NESLAgent:
     def run(self, task: str, verbose: bool = True) -> str:
         """
         Run the agentic loop for a given task.
-        Uses adaptive thinking + tool use until Claude returns end_turn.
+        Uses tool use until Claude returns end_turn.
         """
         if verbose:
             print(f"\n[NESL] Task: {task}")
@@ -353,7 +353,6 @@ class NESLAgent:
             response = self.client.messages.create(
                 model=self.MODEL,
                 max_tokens=4096,
-                thinking={"type": "adaptive"},
                 system=[
                     {
                         "type": "text",
