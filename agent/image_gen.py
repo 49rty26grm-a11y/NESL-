@@ -21,31 +21,83 @@ class ImageGenerator:
 
     # ─── Helpers ──────────────────────────────────────────────────────────────
 
+    # Cached font paths resolved at runtime
+    _font_cache: dict = {}
+
     def _get_font(self, size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
+        cache_key = (size, bold)
+        if cache_key in self._font_cache:
+            return self._font_cache[cache_key]
+
         candidates = []
         if bold:
             candidates = [
+                # Linux
                 "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
                 "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf",
                 "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf",
                 "/usr/share/fonts/truetype/ubuntu/Ubuntu-B.ttf",
                 "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
+                # macOS
+                "/System/Library/Fonts/Supplemental/Arial Bold.ttf",
+                "/Library/Fonts/Arial Bold.ttf",
+                # iOS (Pythonista)
+                "/System/Library/Fonts/Cache/ArialBold.ttf",
+                "/System/Library/Fonts/Core/ArialBold.ttf",
+                # bundled in project assets
+                str(config.ASSETS_DIR / "fonts" / "DejaVuSans-Bold.ttf"),
             ]
         else:
             candidates = [
+                # Linux
                 "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
                 "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf",
                 "/usr/share/fonts/truetype/freefont/FreeSans.ttf",
                 "/usr/share/fonts/truetype/ubuntu/Ubuntu-R.ttf",
                 "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+                # macOS
+                "/System/Library/Fonts/Supplemental/Arial.ttf",
+                "/Library/Fonts/Arial.ttf",
+                # iOS (Pythonista)
+                "/System/Library/Fonts/Cache/Arial.ttf",
+                "/System/Library/Fonts/Core/Arial.ttf",
+                # bundled in project assets
+                str(config.ASSETS_DIR / "fonts" / "DejaVuSans.ttf"),
             ]
+
         for path in candidates:
             try:
-                return ImageFont.truetype(path, size)
+                font = ImageFont.truetype(path, size)
+                self._font_cache[cache_key] = font
+                return font
             except (IOError, OSError):
                 continue
-        # Fallback: PIL default (no size control but always works)
-        return ImageFont.load_default()
+
+        # Last resort: download DejaVu fonts and cache them in assets/fonts/
+        font = self._download_font(size, bold)
+        self._font_cache[cache_key] = font
+        return font
+
+    def _download_font(self, size: int, bold: bool) -> ImageFont.FreeTypeFont:
+        """Download DejaVuSans from GitHub and cache it in assets/fonts/."""
+        import urllib.request
+        fonts_dir = config.ASSETS_DIR / "fonts"
+        fonts_dir.mkdir(exist_ok=True)
+        filename = "DejaVuSans-Bold.ttf" if bold else "DejaVuSans.ttf"
+        dest = fonts_dir / filename
+        if not dest.exists():
+            url = (
+                "https://github.com/dejavu-fonts/dejavu-fonts/raw/main/ttf/"
+                + filename
+            )
+            try:
+                urllib.request.urlretrieve(url, str(dest))
+            except Exception:
+                return ImageFont.load_default()
+        try:
+            return ImageFont.truetype(str(dest), size)
+        except Exception:
+            return ImageFont.load_default()
 
     def _draw_gradient(self, img: Image.Image, top: tuple, bottom: tuple) -> None:
         """Vertical gradient background from top color to bottom color."""
