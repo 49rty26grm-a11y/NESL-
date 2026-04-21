@@ -182,7 +182,7 @@ def post(headline: str, team: str, subtitle: str, post_type: str, live_post: boo
 # ─── schedule ─────────────────────────────────────────────────────────────────
 
 @cli.command()
-@click.option("--interval", default=60, show_default=True, help="Minutes between runs.")
+@click.option("--interval", default=20, show_default=True, help="Minutes between runs.")
 @click.option("--post", "live_post", is_flag=True, default=False, help="Post live to Instagram.")
 def schedule(interval: int, live_post: bool) -> None:
     """Run the daily update agent on a recurring schedule (daemon mode)."""
@@ -191,9 +191,13 @@ def schedule(interval: int, live_post: bool) -> None:
 
     action = "post to Instagram" if live_post else "save as draft"
     task = (
-        "Check for any new completed Patriots or Celtics games from the last 3 hours "
-        "and check for fresh breaking news. Create posts with flyers for anything new "
-        f"and {action}. If nothing new, do nothing."
+        "Check for any new completed Patriots or Celtics games from the last 2 hours. "
+        "If there are final scores, create a score-update post with a flyer and " + action + ". "
+        "Also check for breaking news from ESPN, NBC Sports Boston, Boston Herald, and Boston Globe. "
+        "Only post news that is genuinely breaking or highly significant — trades, injuries to key players, "
+        "coaching changes, playoff results, major signings, or game-changing stories. "
+        "Skip minor roster moves, opinion pieces, or anything already posted. "
+        "If there is nothing new or significant, do absolutely nothing."
     )
 
     while True:

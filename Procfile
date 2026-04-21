@@ -1,1 +1,1 @@
-worker: python run.py schedule --interval 60 --post
+worker: python run.py schedule --interval 20 --post
